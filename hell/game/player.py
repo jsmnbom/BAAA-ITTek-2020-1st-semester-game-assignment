@@ -7,6 +7,7 @@ from pymunk.vec2d import Vec2d
 from pyglet.sprite import Sprite
 from pyglet.window import key as pyglet_key
 from pyglet.text import Label
+import pymunk
 
 from . import Actor, resources, WIDTH
 
@@ -25,15 +26,20 @@ class Player(Actor):
     }
 
     KEY_LABEL_OFFSETS = {
-        KEY_UP: (16, 38),
-        KEY_LEFT: (-12, 10),
-        KEY_DOWN: (16, -20),
-        KEY_RIGHT: (44, 10)
+        KEY_UP: (0, 20),
+        KEY_LEFT: (-26, -7),
+        KEY_DOWN: (0, -36),
+        KEY_RIGHT: (26, -7)
     }
 
-    def __init__(self, *, batch=None, **kwargs):
-        super().__init__(img=resources.player_image, batch=batch, **kwargs)
-        self.speed = 300
+    def __init__(self, *, x, y, batch=None, **kwargs):
+        mass = 10
+        body = pymunk.Body(mass, pymunk.moment_for_box(mass, (32, 32)))
+        body.position = x, y
+        # TODO: Use another shape or even a proper sprite
+        shape = pymunk.Poly.create_box(body, (32, 32), 2)
+        super().__init__(body=body, shape=shape, img=resources.player_image, batch=batch, x=x, y=y, **kwargs)
+        self.speed = 50
 
         self.keys = {
             self.KEY_UP: pyglet_key.W,
@@ -64,14 +70,14 @@ class Player(Actor):
         self.event_handlers = [self.key_timer_sprite, self.key_handler]
 
     def tick(self, dt: float):
-        self.velocity = Vec2d()
+        super().tick(dt)
+
+        vel = Vec2d()
         for key, delta in self.MOVEMENT_DELTAS.items():
             if self.key_handler[self.keys[key]]:
-                self.velocity += delta
+                vel += delta
 
-        self.velocity = (self.velocity.normalized() * self.speed)
-
-        super().tick(dt)
+        self.body.velocity = (vel.normalized() * self.speed)
 
         for key in self.MOVEMENT_DELTAS.keys():
             label = self.key_labels[key]
