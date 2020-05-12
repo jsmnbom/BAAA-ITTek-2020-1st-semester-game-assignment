@@ -9,7 +9,7 @@ from pyglet.window import key as pyglet_key
 from pyglet.text import Label
 import pymunk
 
-from . import Actor, resources, WIDTH
+from . import Actor, resources, WIDTH, CollisionType
 
 
 class Player(Actor):
@@ -32,14 +32,15 @@ class Player(Actor):
         KEY_RIGHT: (26, -7)
     }
 
-    def __init__(self, *, x, y, batch=None, **kwargs):
-        mass = 10
+    def __init__(self, *, pos, batch=None, **kwargs):
+        mass = 50
         body = pymunk.Body(mass, pymunk.moment_for_box(mass, (32, 32)))
-        body.position = x, y
+        body.position = pos
         # TODO: Use another shape or even a proper sprite
         shape = pymunk.Poly.create_box(body, (32, 32), 2)
-        super().__init__(body=body, shape=shape, img=resources.player_image, batch=batch, x=x, y=y, **kwargs)
-        self.speed = 50
+        shape.collision_type = CollisionType.Player
+        super().__init__(body=body, shape=shape, img=resources.player_image, batch=batch, pos=pos, **kwargs)
+        self.speed = 30
 
         self.keys = {
             self.KEY_UP: pyglet_key.W,
@@ -77,7 +78,7 @@ class Player(Actor):
             if self.key_handler[self.keys[key]]:
                 vel += delta
 
-        self.body.velocity = (vel.normalized() * self.speed)
+        self.body.velocity = vel.normalized() * self.speed
 
         for key in self.MOVEMENT_DELTAS.keys():
             label = self.key_labels[key]
@@ -103,7 +104,8 @@ class Player(Actor):
             self.keys[direction] = random.choice(tuple(self.possible_keys - set(self.keys.values())))
 
     def delete(self):
-        for label, _ in self.key_labels:
+        for key in self.MOVEMENT_DELTAS.keys():
+            label = self.key_labels[key]
             label.delete()
         self.key_timer_sprite.delete()
         super().delete()

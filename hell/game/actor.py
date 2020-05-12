@@ -6,8 +6,9 @@ from .game_object import GameObject
 
 
 class Actor(GameObject, Sprite):
-    def __init__(self, body: pymunk.Body, shape: pymunk.Shape, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, body: pymunk.Body, shape: pymunk.Shape, *args, pos, **kwargs):
+        pos = Vec2d(pos)
+        super().__init__(*args, x=pos.x, y=pos.y, **kwargs)
 
         self.body = body
         self.shape = shape
