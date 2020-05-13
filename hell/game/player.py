@@ -35,7 +35,6 @@ class Player(Actor):
     def __init__(self, *, pos, batch=None, **kwargs):
         mass = 50
         body = pymunk.Body(mass, pymunk.moment_for_box(mass, (32, 32)))
-        body.position = pos
         # TODO: Use another shape or even a proper sprite
         shape = pymunk.Poly.create_box(body, (32, 32), 2)
         shape.collision_type = CollisionType.Player

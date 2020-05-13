@@ -6,7 +6,7 @@ from pyglet.window import Window, FPSDisplay
 from pyglet.graphics import Batch
 import pymunk
 
-from hell.game import TPS, WIDTH, HEIGHT, Player, GameObject, Enemy, CollisionType
+from hell.game import TPS, WIDTH, HEIGHT, Player, GameObject, CollisionType, Level
 
 
 # noinspection PyAbstractClass
@@ -15,16 +15,17 @@ class GameWindow(Window):
         super().__init__(**kwargs)
 
         self.objects: List[GameObject] = []
-        self.to_add: List[GameObject] = []
         self.main_batch = Batch()
+        self.player_batch = Batch()
 
         self.fps_display = FPSDisplay(window=self)
 
         clock.schedule_interval(self.tick, 1 / TPS)
 
-        # Vars assigned to later
+        # Vars assigned to later in self.reset
         self.space = None
         self.player = None
+        self.level = None
 
     def reset(self):
         # Clear handlers
@@ -37,20 +38,17 @@ class GameWindow(Window):
         self.space = pymunk.Space()
         # Remove objects
         for obj in self.objects:
-            obj.delete()
-        # And finally clear all the objects
+            if hasattr(obj, 'delete'):
+                obj.delete()
         self.objects = []
 
-        self.player = Player(pos=(self.width / 2, self.height / 2), batch=self.main_batch)
+        self.player = Player(pos=(self.width / 2, self.height / 2), batch=self.player_batch)
         self._add_game_object(self.player)
 
+        self.level = Level(player=self.player, batch=self.main_batch)
+        self._add_game_object(self.level)
+
         self._add_walls()
-
-        clock.unschedule(self._add_random_enemy)
-        clock.schedule_interval(self._add_random_enemy, 1)
-
-    def _add_random_enemy(self, *args):
-        self.to_add.append(Enemy(pos=(100, 100), player=self.player, batch=self.main_batch))
 
     def _add_walls(self):
         static_body = self.space.static_body
@@ -65,22 +63,28 @@ class GameWindow(Window):
             wall.collision_type = CollisionType.Wall
 
         wall_player_collision_handler = self.space.add_collision_handler(CollisionType.Player, CollisionType.Wall)
-        wall_player_collision_handler.post_solve = lambda *args: self.reset()
+        wall_player_collision_handler.post_solve = lambda *_: self.reset()
 
     def tick(self, dt: float):
+        to_add: List[GameObject] = []
+
+        # Tick each object and collect new objects they may have spawned
         for obj in self.objects:
             obj.tick(dt)
-            self.to_add.extend(obj.new_objects)
+            to_add.extend(obj.new_objects)
             obj.new_objects = []
 
         for to_remove in [obj for obj in self.objects if obj.dead]:
-            self.to_add.extend(to_remove.new_objects)
-            to_remove.delete()
+            # If it has custom deleting routine (like pyglet's sprites)
+            if hasattr(to_remove, 'delete'):
+                to_remove.delete()
+            # Remove our tracking of the object
             self.objects.remove(to_remove)
 
-        for obj in self.to_add:
+        # Add new objects
+        for obj in to_add:
             self._add_game_object(obj)
-        self.to_add = []
+
         # Run physics in overdrive to get proper segment collision at high velocity
         for i in range(10):
             self.space.step(dt)
@@ -97,6 +101,7 @@ class GameWindow(Window):
     def on_draw(self):
         self.clear()
         self.main_batch.draw()
+        self.player_batch.draw()
         self.fps_display.draw()
 
 

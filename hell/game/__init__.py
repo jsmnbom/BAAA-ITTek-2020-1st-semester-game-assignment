@@ -4,4 +4,5 @@ from .resources import *
 from .game_object import GameObject
 from .actor import Actor
 from .player import Player
-from .enemy import Enemy
+from .enemy import *
+from .level import Level

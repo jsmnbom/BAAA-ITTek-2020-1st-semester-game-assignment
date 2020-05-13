@@ -16,6 +16,3 @@ class GameObject(ABC):
 
     def tick(self, dt: float):
         pass
-
-    def delete(self):
-        pass
