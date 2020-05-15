@@ -16,3 +16,6 @@ class GameObject(ABC):
 
     def tick(self, dt: float):
         pass
+
+    def die(self):
+        self.dead = True

@@ -1,4 +1,4 @@
-from pyglet import resource
+from pyglet import resource, font
 from pyglet.image import SolidColorImagePattern
 
 resource.path = ['resources']
@@ -13,10 +13,17 @@ def _set_anchor_center(img):
 player_image = SolidColorImagePattern((255, 255, 255, 255)).create_image(32, 32)
 _set_anchor_center(player_image)
 
-enemy_pawn_image = resource.image("enemy/pawn.png")
+enemy_pawn_image = resource.image('enemy/pawn.png')
 _set_anchor_center(enemy_pawn_image)
 
-enemy_slider_image = resource.image("enemy/slider.png")
+enemy_slider_image = resource.image('enemy/slider.png')
 _set_anchor_center(enemy_slider_image)
 
+pellet_image = resource.image('pellet.png')
+_set_anchor_center(pellet_image)
+
 key_timer_image = SolidColorImagePattern((255, 255, 255, 150)).create_image(16, 16)
+
+
+resource.add_font('m5x7.ttf')
+font_m5x7 = font.load('m5x7')

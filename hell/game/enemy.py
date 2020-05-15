@@ -21,6 +21,11 @@ class Enemy(Actor):
 
         self.event_handlers = []
 
+    @staticmethod
+    def init_collision(game_window):
+        collision_handler = game_window.space.add_collision_handler(CollisionType.Enemy, CollisionType.Wall)
+        collision_handler.begin = lambda *args: False
+
 
 class Pawn(Enemy):
     START_SIZE = Vec2d(32, 32)
@@ -53,18 +58,20 @@ class Slider(Enemy):
         self.move_timer = 0
 
     @staticmethod
-    def player_collision_pre_solve(arbiter, space, data):
-        ps = arbiter.contact_point_set
-        slider = arbiter.shapes[1].owner
-        direction = (slider.end_pos - slider.start_pos).normalized()
-        arbiter.shapes[0].body.position += direction * abs(ps.points[0].distance)
-        # Ignore default collision response
-        return False
+    def init_collision(game_window):
+        def player_collision_pre_solve(arbiter, space, data):
+            ps = arbiter.contact_point_set
+            slider = arbiter.shapes[1].owner
+            direction = (slider.end_pos - slider.start_pos).normalized()
+            arbiter.shapes[0].body.position += direction * abs(ps.points[0].distance)
+            # Ignore default collision response
+            return False
 
-    @staticmethod
-    def init_collision(space):
-        collision = space.add_collision_handler(CollisionType.Player, CollisionType.EnemySlider)
-        collision.pre_solve = Slider.player_collision_pre_solve
+        collision = game_window.space.add_collision_handler(CollisionType.Player, CollisionType.EnemySlider)
+        collision.pre_solve = player_collision_pre_solve
+
+        collision_handler = game_window.space.add_collision_handler(CollisionType.EnemySlider, CollisionType.Wall)
+        collision_handler.begin = lambda *args: False
 
     def tick(self, dt: float):
         super().tick(dt)

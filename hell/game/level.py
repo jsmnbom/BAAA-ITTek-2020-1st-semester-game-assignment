@@ -3,7 +3,7 @@ from collections import namedtuple
 
 import pymunk
 
-from . import GameObject, Pawn, WIDTH, HEIGHT, Slider
+from . import GameObject, Pawn, WIDTH, HEIGHT, Slider, Pellet
 
 EnemyData = namedtuple('EnemyData', 'type, weight, cap')
 
@@ -26,6 +26,8 @@ class Level(GameObject):
         self.enemy_timer = 2
 
         self.spawned_enemies = {enemy.type: 0 for enemy in enemy_data}
+
+        self.spawn_pellet()
 
     def tick(self, dt: float):
         self.enemy_timer += dt
@@ -71,3 +73,8 @@ class Level(GameObject):
 
             self.new_objects += [enemy_type(pos=pos, player=self.player, batch=self.batch)]
             self.enemy_timer = 0
+
+    def spawn_pellet(self):
+        x = random.randrange(100, WIDTH - 100)
+        y = random.randrange(100, HEIGHT - 100)
+        self.new_objects += [Pellet(pos=(x, y), batch=self.batch)]

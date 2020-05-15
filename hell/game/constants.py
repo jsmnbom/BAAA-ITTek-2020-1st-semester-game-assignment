@@ -7,3 +7,4 @@ class CollisionType:
     Wall = 1
     Enemy = 2
     EnemySlider = 3
+    Pellet = 4

@@ -26,17 +26,18 @@ class Player(Actor):
     }
 
     KEY_LABEL_OFFSETS = {
-        KEY_UP: (0, 20),
-        KEY_LEFT: (-26, -7),
-        KEY_DOWN: (0, -36),
-        KEY_RIGHT: (26, -7)
+        KEY_UP: (1, 28),
+        KEY_LEFT: (-26, 0),
+        KEY_DOWN: (1, -30),
+        KEY_RIGHT: (28, 0)
     }
 
     def __init__(self, *, pos, batch=None, **kwargs):
+        size = (32, 32)
         mass = 50
-        body = pymunk.Body(mass, pymunk.moment_for_box(mass, (32, 32)))
+        body = pymunk.Body(mass, pymunk.moment_for_box(mass, size))
         # TODO: Use another shape or even a proper sprite
-        shape = pymunk.Poly.create_box(body, (32, 32), 2)
+        shape = pymunk.Poly.create_box(body, size, 2)
         shape.collision_type = CollisionType.Player
         super().__init__(body=body, shape=shape, img=resources.player_image, batch=batch, pos=pos, **kwargs)
         self.speed = 50
@@ -55,7 +56,9 @@ class Player(Actor):
             align='center',
             width=32,
             height=32,
-            batch=batch
+            font_size=24,
+            font_name='m5x7',
+            batch=batch,
         ))
         self.possible_keys = set(ord(x) for x in (string.digits + string.ascii_lowercase))
 
@@ -91,7 +94,7 @@ class Player(Actor):
 
         if self.key_timer <= 0:
             self.key_timer = self.key_timer_max
-            self.randomise_movement_keys(1)
+            # self.randomise_movement_keys(1)
 
     def randomise_movement_keys(self, i: int):
         for _ in range(i):

@@ -6,7 +6,7 @@ from pyglet.window import Window, FPSDisplay
 from pyglet.graphics import Batch
 import pymunk
 
-from hell.game import TPS, WIDTH, HEIGHT, Player, GameObject, CollisionType, Level, Slider
+from hell.game import TPS, WIDTH, HEIGHT, Player, GameObject, CollisionType, Level, Slider, Enemy, UI, Pellet
 
 
 # noinspection PyAbstractClass
@@ -26,6 +26,7 @@ class GameWindow(Window):
         self.space = None
         self.player = None
         self.level = None
+        self.ui = None
 
     @staticmethod
     def cancel_collision(arbiter, space, data):
@@ -52,14 +53,14 @@ class GameWindow(Window):
         self.level = Level(player=self.player, batch=self.main_batch)
         self._add_game_object(self.level)
 
+        self.ui = UI(batch=self.main_batch)
+        self._add_game_object(self.ui)
+
         self._add_walls()
 
-        collision_handler = self.space.add_collision_handler(CollisionType.Enemy, CollisionType.Wall)
-        collision_handler.begin = self.cancel_collision
-        collision_handler = self.space.add_collision_handler(CollisionType.EnemySlider, CollisionType.Wall)
-        collision_handler.begin = self.cancel_collision
-
-        Slider.init_collision(self.space)
+        Pellet.init_collision(self)
+        Enemy.init_collision(self)
+        Slider.init_collision(self)
 
     def _add_walls(self):
         static_body = self.space.static_body
