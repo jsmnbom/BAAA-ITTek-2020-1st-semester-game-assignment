@@ -43,8 +43,7 @@ class GameWindow(Window):
         self.space = pymunk.Space()
         # Remove objects
         for obj in self.objects:
-            if hasattr(obj, 'delete'):
-                obj.delete()
+            obj.delete()
         self.objects = []
 
         self.player = Player(pos=(self.width / 2, self.height / 2), batch=self.player_batch)

@@ -5,6 +5,8 @@ from pyglet.sprite import Sprite
 from .game_object import GameObject
 
 
+# We need GameObject first here, which according to python's rules about the MRO and since we were
+# careful to put a super().__init__() call in GameObject. __init__() which will then call Sprite.__init__()
 class Actor(GameObject, Sprite):
     def __init__(self, *args, body: pymunk.Body, shape: pymunk.Shape, pos, **kwargs):
         pos = Vec2d(pos)
@@ -26,3 +28,6 @@ class Actor(GameObject, Sprite):
     @pos.setter
     def pos(self, value):
         self.body.position = value
+
+    def delete(self):
+        super().delete()

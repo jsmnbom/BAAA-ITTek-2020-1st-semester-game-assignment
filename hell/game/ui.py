@@ -27,3 +27,6 @@ class UI(GameObject):
     def score(self, value):
         self._score = value
         self.score_label.text = f'Score: {self._score}'
+
+    def delete(self):
+        self.score_label.delete()

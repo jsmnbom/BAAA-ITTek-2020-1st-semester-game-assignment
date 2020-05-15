@@ -1,7 +1,4 @@
-from abc import ABC
-
-
-class GameObject(ABC):
+class GameObject:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -19,3 +16,10 @@ class GameObject(ABC):
 
     def die(self):
         self.dead = True
+
+    def delete(self):
+        # Needed because Actor uses multiple inheritance and the MRO is a little funky
+        # We need the hasattr since GameObject could be a non-actor that doesn't necessarily have a delete()
+        if hasattr(super(), 'delete'):
+            # noinspection PyUnresolvedReferences
+            super().delete()
