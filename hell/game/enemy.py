@@ -11,10 +11,10 @@ from . import Actor, resources, CollisionType, WIDTH, HEIGHT
 class Enemy(Actor):
     START_SIZE = Vec2d(0, 0)
 
-    def __init__(self, *, mass, size, img, pos, player, batch=None, **kwargs):
+    def __init__(self, *, mass, size, img, pos, player, collision_type=CollisionType.Enemy, batch=None, **kwargs):
         body = pymunk.Body(mass, pymunk.moment_for_box(mass, size))
         shape = pymunk.Poly.create_box(body, size, 1)
-        shape.collision_type = CollisionType.Enemy
+        shape.collision_type = collision_type
         super().__init__(body=body, shape=shape, img=img, batch=batch, pos=pos, **kwargs)
         self.player = player
         self.size = Vec2d(size)
@@ -42,7 +42,7 @@ class Slider(Enemy):
 
     def __init__(self, *, pos, player, batch=None, **kwargs):
         super().__init__(mass=500, size=self.START_SIZE, img=resources.enemy_slider_image, pos=pos, player=player,
-                         batch=batch, **kwargs)
+                         collision_type=CollisionType.EnemySlider, batch=batch, **kwargs)
 
         self.speed = 100
 
@@ -51,6 +51,20 @@ class Slider(Enemy):
         self.start_pos: Optional[Vec2d] = None
         self.end_pos: Optional[Vec2d] = None
         self.move_timer = 0
+
+    @staticmethod
+    def player_collision_pre_solve(arbiter, space, data):
+        ps = arbiter.contact_point_set
+        slider = arbiter.shapes[1].owner
+        direction = (slider.end_pos - slider.start_pos).normalized()
+        arbiter.shapes[0].body.position += direction * abs(ps.points[0].distance)
+        # Ignore default collision response
+        return False
+
+    @staticmethod
+    def init_collision(space):
+        collision = space.add_collision_handler(CollisionType.Player, CollisionType.EnemySlider)
+        collision.pre_solve = Slider.player_collision_pre_solve
 
     def tick(self, dt: float):
         super().tick(dt)
@@ -64,13 +78,13 @@ class Slider(Enemy):
             self.end_pos = Vec2d()
             self.start_pos = self.pos
             delta = self.player.pos - self.pos
-            if -48 < delta.y < 48:
+            if -64 < delta.y < 64:
                 self.end_pos.y = self.pos.y
                 if delta.x > 0:
                     self.end_pos.x = WIDTH - self.size.x / 2
                 else:
                     self.end_pos.x = self.size.x / 2
-            elif -48 < delta.x < 48:
+            elif -64 < delta.x < 64:
                 self.end_pos.x = self.pos.x
                 if delta.y > 0:
                     self.end_pos.y = HEIGHT - self.size.y / 2

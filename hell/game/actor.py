@@ -12,6 +12,7 @@ class Actor(GameObject, Sprite):
 
         self.body = body
         self.shape = shape
+        self.shape.owner = self
         self.pos = pos
 
     def tick(self, dt: float):

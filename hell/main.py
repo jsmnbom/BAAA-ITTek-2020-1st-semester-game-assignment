@@ -6,7 +6,7 @@ from pyglet.window import Window, FPSDisplay
 from pyglet.graphics import Batch
 import pymunk
 
-from hell.game import TPS, WIDTH, HEIGHT, Player, GameObject, CollisionType, Level
+from hell.game import TPS, WIDTH, HEIGHT, Player, GameObject, CollisionType, Level, Slider
 
 
 # noinspection PyAbstractClass
@@ -26,6 +26,10 @@ class GameWindow(Window):
         self.space = None
         self.player = None
         self.level = None
+
+    @staticmethod
+    def cancel_collision(arbiter, space, data):
+        return False
 
     def reset(self):
         # Clear handlers
@@ -50,6 +54,13 @@ class GameWindow(Window):
 
         self._add_walls()
 
+        collision_handler = self.space.add_collision_handler(CollisionType.Enemy, CollisionType.Wall)
+        collision_handler.begin = self.cancel_collision
+        collision_handler = self.space.add_collision_handler(CollisionType.EnemySlider, CollisionType.Wall)
+        collision_handler.begin = self.cancel_collision
+
+        Slider.init_collision(self.space)
+
     def _add_walls(self):
         static_body = self.space.static_body
         walls = [
@@ -62,8 +73,8 @@ class GameWindow(Window):
             self.space.add(wall)
             wall.collision_type = CollisionType.Wall
 
-        wall_player_collision_handler = self.space.add_collision_handler(CollisionType.Player, CollisionType.Wall)
-        wall_player_collision_handler.post_solve = lambda *_: self.reset()
+        collision_handler = self.space.add_collision_handler(CollisionType.Player, CollisionType.Wall)
+        collision_handler.post_solve = lambda *_: self.reset()
 
     def tick(self, dt: float):
         to_add: List[GameObject] = []

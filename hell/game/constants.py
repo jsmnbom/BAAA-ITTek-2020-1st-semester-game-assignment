@@ -6,3 +6,4 @@ class CollisionType:
     Player = 0
     Wall = 1
     Enemy = 2
+    EnemySlider = 3
