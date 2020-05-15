@@ -94,7 +94,7 @@ class Player(Actor):
 
         if self.key_timer <= 0:
             self.key_timer = self.key_timer_max
-            # self.randomise_movement_keys(1)
+            self.randomise_movement_keys(1)
 
     def randomise_movement_keys(self, i: int):
         for _ in range(i):
