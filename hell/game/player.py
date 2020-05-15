@@ -39,7 +39,7 @@ class Player(Actor):
         shape = pymunk.Poly.create_box(body, (32, 32), 2)
         shape.collision_type = CollisionType.Player
         super().__init__(body=body, shape=shape, img=resources.player_image, batch=batch, pos=pos, **kwargs)
-        self.speed = 30
+        self.speed = 50
 
         self.keys = {
             self.KEY_UP: pyglet_key.W,

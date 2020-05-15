@@ -1,12 +1,16 @@
 import random
+from collections import namedtuple
 
 import pymunk
 
-from . import GameObject, Pawn, WIDTH, HEIGHT
+from . import GameObject, Pawn, WIDTH, HEIGHT, Slider
 
-ENEMY_WEIGHTS = {
-    Pawn: 1
-}
+EnemyData = namedtuple('EnemyData', 'type, weight, cap')
+
+enemy_data = [
+    EnemyData(Pawn, 100, 100),
+    EnemyData(Slider, 20, 2),
+]
 
 
 def clamp(value, lower, upper):
@@ -19,16 +23,23 @@ class Level(GameObject):
         self.batch = batch
         self.player = player
 
-        self.enemy_timer = 0
+        self.enemy_timer = 2
 
-        self.enemy_types_list = list(ENEMY_WEIGHTS.keys())
-        self.enemy_weights_list = list(ENEMY_WEIGHTS.values())
+        self.spawned_enemies = {enemy.type: 0 for enemy in enemy_data}
 
     def tick(self, dt: float):
         self.enemy_timer += dt
 
-        if self.enemy_timer >= 0.3:
-            enemy_type = random.choices(self.enemy_types_list, self.enemy_weights_list)[0]
+        if self.enemy_timer >= 2:
+            # Choose a random enemy taking weight and max cap into account
+            enemies = [(enemy.type, enemy.weight) for enemy in enemy_data if
+                       self.spawned_enemies[enemy.type] < enemy.cap]
+            if len(enemies) < 1:
+                return
+            types, weights = zip(*enemies)
+            enemy_type = random.choices(types, weights)[0]
+            self.spawned_enemies[enemy_type] += 1
+            size_x, size_y = enemy_type.START_SIZE / 2
 
             # If player is in the middle
             middle_bb = pymunk.BB.newForCircle((WIDTH / 2, HEIGHT / 2), 50)
@@ -37,25 +48,25 @@ class Level(GameObject):
                 # Pick left, top, right, bottom side
                 side = random.choice([0, 1, 2, 3])
                 if side == 0:
-                    pos = (100, random.randrange(100, HEIGHT - 100))
+                    pos = (size_x, random.randrange(size_y, HEIGHT - size_y))
                 elif side == 1:
-                    pos = (random.randrange(100, WIDTH - 100), HEIGHT - 100)
+                    pos = (random.randrange(size_x, WIDTH - size_x), HEIGHT - size_y)
                 elif side == 2:
-                    pos = (WIDTH - 100, random.randrange(100, HEIGHT - 100))
+                    pos = (WIDTH - size_x, random.randrange(size_y, HEIGHT - size_y))
                 else:
-                    pos = (random.randrange(100, WIDTH - 100), 100)
+                    pos = (random.randrange(size_x, WIDTH - size_x), size_y)
             else:
                 x, y = self.player.pos
                 x = WIDTH / 2 - (x - WIDTH / 2)
-                x = clamp(x, 100, WIDTH - 100)
+                x = clamp(x, size_x, WIDTH - size_x)
                 y = HEIGHT / 2 - (y - HEIGHT / 2)
-                y = clamp(y, 100, HEIGHT - 100)
+                y = clamp(y, size_y, HEIGHT - size_y)
                 x_wall_dir = min(x, WIDTH - x)
                 y_wall_dir = min(y, HEIGHT - y)
                 if x_wall_dir < y_wall_dir:
-                    x = 100 if x < WIDTH / 2 else WIDTH - 100
+                    x = size_x if x < WIDTH / 2 else WIDTH - size_x
                 else:
-                    y = 100 if y < HEIGHT / 2 else HEIGHT - 100
+                    y = size_y if y < HEIGHT / 2 else HEIGHT - size_y
                 pos = (x, y)
 
             self.new_objects += [enemy_type(pos=pos, player=self.player, batch=self.batch)]

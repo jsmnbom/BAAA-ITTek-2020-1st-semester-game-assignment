@@ -1,11 +1,22 @@
+from pyglet import resource
 from pyglet.image import SolidColorImagePattern
 
-player_image = SolidColorImagePattern((255, 255, 255, 255)).create_image(32, 32)
-player_image.anchor_x = 16
-player_image.anchor_y = 16
+resource.path = ['resources']
+resource.reindex()
 
-enemy_pawn_image = SolidColorImagePattern((0, 255, 255, 255)).create_image(32, 32)
-enemy_pawn_image.anchor_x = 16
-enemy_pawn_image.anchor_y = 16
+
+def _set_anchor_center(img):
+    img.anchor_x = int(img.width / 2)
+    img.anchor_y = int(img.height / 2)
+
+
+player_image = SolidColorImagePattern((255, 255, 255, 255)).create_image(32, 32)
+_set_anchor_center(player_image)
+
+enemy_pawn_image = resource.image("enemy/pawn.png")
+_set_anchor_center(enemy_pawn_image)
+
+enemy_slider_image = resource.image("enemy/slider.png")
+_set_anchor_center(enemy_slider_image)
 
 key_timer_image = SolidColorImagePattern((255, 255, 255, 150)).create_image(16, 16)
