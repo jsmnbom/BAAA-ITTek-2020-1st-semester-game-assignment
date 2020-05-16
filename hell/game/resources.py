@@ -1,6 +1,8 @@
 from pyglet import resource, font
 from pyglet.image import SolidColorImagePattern
 
+from . import WIDTH, HEIGHT
+
 resource.path = ['resources']
 resource.reindex()
 
@@ -21,6 +23,8 @@ _set_anchor_center(enemy_slider_image)
 
 pellet_image = resource.image('pellet.png')
 _set_anchor_center(pellet_image)
+
+overlay_image = SolidColorImagePattern((255, 255, 255, 255)).create_image(WIDTH, HEIGHT)
 
 key_timer_image = SolidColorImagePattern((255, 255, 255, 150)).create_image(16, 16)
 

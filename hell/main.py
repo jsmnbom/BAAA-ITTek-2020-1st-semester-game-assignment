@@ -17,6 +17,8 @@ class GameWindow(Window):
         self.objects: List[GameObject] = []
         self.main_batch = Batch()
         self.player_batch = Batch()
+        self.ui_batch = Batch()
+        self.overlay_batch = Batch()
 
         self.fps_display = FPSDisplay(window=self)
 
@@ -46,13 +48,14 @@ class GameWindow(Window):
             obj.delete()
         self.objects = []
 
-        self.player = Player(pos=(self.width / 2, self.height / 2), batch=self.player_batch)
+        self.player = Player(pos=(self.width / 2, self.height / 2), player_batch=self.player_batch,
+                             ui_batch=self.ui_batch)
         self._add_game_object(self.player)
 
         self.level = Level(player=self.player, batch=self.main_batch)
         self._add_game_object(self.level)
 
-        self.ui = UI(batch=self.main_batch)
+        self.ui = UI(player=self.player, ui_batch=self.ui_batch, overlay_batch=self.overlay_batch)
         self._add_game_object(self.ui)
 
         self._add_walls()
@@ -113,6 +116,8 @@ class GameWindow(Window):
         self.clear()
         self.main_batch.draw()
         self.player_batch.draw()
+        self.ui_batch.draw()
+        self.overlay_batch.draw()
         self.fps_display.draw()
 
 

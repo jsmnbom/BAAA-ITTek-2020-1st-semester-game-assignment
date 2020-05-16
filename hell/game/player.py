@@ -32,15 +32,15 @@ class Player(Actor):
         KEY_RIGHT: (28, 0)
     }
 
-    def __init__(self, *, pos, batch=None, **kwargs):
+    def __init__(self, *, pos, player_batch=None, ui_batch=None, **kwargs):
         size = (32, 32)
         mass = 50
         body = pymunk.Body(mass, pymunk.moment_for_box(mass, size))
         # TODO: Use another shape or even a proper sprite
         shape = pymunk.Poly.create_box(body, size, 2)
         shape.collision_type = CollisionType.Player
-        super().__init__(body=body, shape=shape, img=resources.player_image, batch=batch, pos=pos, **kwargs)
-        self.speed = 50
+        super().__init__(body=body, shape=shape, img=resources.player_image, batch=player_batch, pos=pos, **kwargs)
+        self.speed = 40
 
         self.keys = {
             self.KEY_UP: pyglet_key.W,
@@ -58,11 +58,11 @@ class Player(Actor):
             height=32,
             font_size=24,
             font_name='m5x7',
-            batch=batch,
+            batch=ui_batch,
         ))
         self.possible_keys = set(ord(x) for x in (string.digits + string.ascii_lowercase))
 
-        self.key_timer_sprite = Sprite(img=resources.key_timer_image, x=0, y=0, batch=batch)
+        self.key_timer_sprite = Sprite(img=resources.key_timer_image, x=0, y=0, batch=ui_batch)
         self.key_timer_sprite.scale_x = WIDTH / 16
 
         self.key_timer_max = 5
