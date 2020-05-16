@@ -3,13 +3,13 @@ from collections import namedtuple
 
 import pymunk
 
-from . import GameObject, Pawn, WIDTH, HEIGHT, Slider, Pellet
+from . import GameObject, EnemyPawn, WIDTH, HEIGHT, EnemySlider, Pellet
 
 EnemyData = namedtuple('EnemyData', 'type, weight, cap')
 
 enemy_data = [
-    EnemyData(Pawn, 100, 100),
-    EnemyData(Slider, 20, 2),
+    EnemyData(EnemyPawn, 100, 100),
+    EnemyData(EnemySlider, 20, 2),
 ]
 
 

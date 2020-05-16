@@ -30,3 +30,6 @@ class UI(GameObject):
 
     def delete(self):
         self.score_label.delete()
+
+    def draw(self):
+        print("test")

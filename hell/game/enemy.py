@@ -27,7 +27,7 @@ class EnemyPawn(Enemy):
 
     def __init__(self, *, pos, player, batch=None, **kwargs):
         super().__init__(mass=10, size=self.START_SIZE, img=resources.enemy_pawn_image, pos=pos, player=player,
-                         batch=batch, **kwargs)
+                         collision_type=CollisionType.EnemyPawn, batch=batch, **kwargs)
         self.speed = 10
 
     def tick(self, dt: float):

@@ -28,8 +28,8 @@ class Pellet(Actor):
         collision_handler = game_window.space.add_collision_handler(CollisionType.Player, CollisionType.Pellet)
         collision_handler.pre_solve = pre_solve
 
-        collision_handler = game_window.space.add_collision_handler(CollisionType.Enemy, CollisionType.Pellet)
+        collision_handler = game_window.space.add_collision_handler(CollisionType.EnemyPawn, CollisionType.Pellet)
         collision_handler.begin = lambda *args: False
 
         collision_handler = game_window.space.add_collision_handler(CollisionType.EnemySlider, CollisionType.Pellet)
-        collision_handler.begin = lambda *args: False
+        collision_handler.begin = lambda *_: False
