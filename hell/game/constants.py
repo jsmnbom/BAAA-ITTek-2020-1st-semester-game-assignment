@@ -5,6 +5,7 @@ TPS = 120.0
 class CollisionType:
     Player = 0
     Wall = 1
-    Enemy = 2
-    EnemySlider = 3
-    Pellet = 4
+    Pellet = 2
+    EnemyPawn = 3
+    EnemySlider = 4
+

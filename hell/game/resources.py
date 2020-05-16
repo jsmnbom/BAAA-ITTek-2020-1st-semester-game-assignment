@@ -24,6 +24,5 @@ _set_anchor_center(pellet_image)
 
 key_timer_image = SolidColorImagePattern((255, 255, 255, 150)).create_image(16, 16)
 
-
 resource.add_font('m5x7.ttf')
 font_m5x7 = font.load('m5x7')

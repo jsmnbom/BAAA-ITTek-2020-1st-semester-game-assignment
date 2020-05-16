@@ -6,7 +6,7 @@ from pyglet.window import Window, FPSDisplay
 from pyglet.graphics import Batch
 import pymunk
 
-from hell.game import TPS, WIDTH, HEIGHT, Player, GameObject, CollisionType, Level, Slider, Enemy, UI, Pellet
+from hell.game import (TPS, WIDTH, HEIGHT, Player, GameObject, CollisionType, Level, EnemyPawn, EnemySlider, UI, Pellet)
 
 
 # noinspection PyAbstractClass
@@ -58,8 +58,8 @@ class GameWindow(Window):
         self._add_walls()
 
         Pellet.init_collision(self)
-        Enemy.init_collision(self)
-        Slider.init_collision(self)
+        EnemyPawn.init_collision(self)
+        EnemySlider.init_collision(self)
 
     def _add_walls(self):
         static_body = self.space.static_body
