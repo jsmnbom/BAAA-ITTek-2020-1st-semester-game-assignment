@@ -1,4 +1,5 @@
 class GameObject:
+    """Base object for all objects in the game that needs to be ticked and be able to die."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

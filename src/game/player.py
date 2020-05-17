@@ -5,13 +5,12 @@ from functools import partial
 from collections import defaultdict
 
 from pymunk.vec2d import Vec2d
-from pyglet.sprite import Sprite
 from pyglet.window import key as pyglet_key
 from pyglet.text import Label
 import pymunk
 import pytweening
 
-from . import Actor, resources, WIDTH, CollisionType, blink
+from . import Actor, resources, CollisionType, blink
 
 
 class Player(Actor):

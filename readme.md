@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a project for a game assignment in programming class IT Technology 1semester 2020 Business Academy Aarhus.
+This is a project for a game assignment in programming (IT Technology 1st semester 2020 at Business Academy Aarhus).
 
 The game is written in python and uses pyglet for graphics.
 The basic premise of the game is to simply avoid the edges of the screen.

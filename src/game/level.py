@@ -22,6 +22,8 @@ def clamp(value, lower, upper):
 
 
 class Level(GameObject):
+    """Level that handles spawning of pellets and enemies."""
+
     def __init__(self, *, batch, player):
         super().__init__()
         self.batch = batch
