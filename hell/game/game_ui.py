@@ -4,7 +4,7 @@ from pyglet.text import Label
 from . import GameObject, WIDTH, HEIGHT, resources
 
 
-class UI(GameObject):
+class GameUI(GameObject):
     def __init__(self, *, player, ui_batch=None, overlay_batch=None):
         super().__init__()
 
@@ -23,9 +23,9 @@ class UI(GameObject):
         )
         self.score = self._score
 
-        self.overlay = Sprite(resources.overlay_image, batch=overlay_batch)
-        self.overlay.color = (150, 0, 0)
-        self.overlay.opacity = 25
+        # self.overlay = Sprite(resources.overlay_image, batch=overlay_batch)
+        # self.overlay.color = (150, 0, 0)
+        # self.overlay.opacity = 25
 
     @property
     def score(self):
@@ -39,9 +39,9 @@ class UI(GameObject):
     def delete(self):
         self.score_label.delete()
 
-    def tick(self, dt: float):
-        min_wall_distance = min([self.player.x, WIDTH - self.player.x, self.player.y, HEIGHT - self.player.y])
-        if min_wall_distance < 100:
-            self.overlay.opacity = 155 - (min_wall_distance / 100) * (155 - 25)
-        else:
-            self.overlay.opacity = 25
+    # def tick(self, dt: float):
+    #     min_wall_distance = min([self.player.x, WIDTH - self.player.x, self.player.y, HEIGHT - self.player.y])
+    #     if min_wall_distance < 100:
+    #         self.overlay.opacity = 155 - (min_wall_distance / 100) * (155 - 25)
+    #     else:
+    #         self.overlay.opacity = 25
