@@ -1,5 +1,6 @@
 import string
 import random
+import math
 from functools import partial
 from collections import defaultdict
 
@@ -8,8 +9,9 @@ from pyglet.sprite import Sprite
 from pyglet.window import key as pyglet_key
 from pyglet.text import Label
 import pymunk
+import pytweening
 
-from . import Actor, resources, WIDTH, CollisionType
+from . import Actor, resources, WIDTH, CollisionType, blink
 
 
 class Player(Actor):
@@ -62,15 +64,13 @@ class Player(Actor):
         ))
         self.possible_keys = set(ord(x) for x in (string.digits + string.ascii_lowercase))
 
-        self.key_timer_sprite = Sprite(img=resources.key_timer_image, x=0, y=0, batch=ui_batch)
-        self.key_timer_sprite.scale_x = WIDTH / 16
-
         self.key_timer_max = 5
         self.key_timer = self.key_timer_max
         self.key_directions_randomised = []
+        self.next_direction = self._get_next_direction()
 
         self.key_handler = pyglet_key.KeyStateHandler()
-        self.event_handlers = [self.key_timer_sprite, self.key_handler]
+        self.event_handlers = [self.key_handler]
 
     def tick(self, dt: float):
         super().tick(dt)
@@ -90,24 +90,35 @@ class Player(Actor):
             label.text = chr(self.keys[key]).upper()
 
         self.key_timer -= 1 * dt
-        self.key_timer_sprite.scale_x = (WIDTH * (self.key_timer / self.key_timer_max)) / 16
 
         if self.key_timer <= 0:
             self.key_timer = self.key_timer_max
-            self.randomise_movement_keys(1)
+            self._randomise_movement_key()
+            for key in self.MOVEMENT_DELTAS.keys():
+                label = self.key_labels[key]
+                label.color = (255, 255, 255, 255)
 
-    def randomise_movement_keys(self, i: int):
-        for _ in range(i):
-            if not self.key_directions_randomised:
-                self.key_directions_randomised = list(self.MOVEMENT_DELTAS.keys())
-                random.shuffle(self.key_directions_randomised)
+        next_key_blink_start = 1.5
+        next_key_blink_interval = 0.5
+        if self.key_timer < next_key_blink_start:
+            next_key_blink = math.fmod(self.key_timer, next_key_blink_interval)
+            self.key_labels[self.next_direction].color = blink(next_key_blink, pytweening.easeInCubic,
+                                                               pytweening.easeOutCubic, next_key_blink_interval,
+                                                               (255, 255, 255))
 
-            direction = self.key_directions_randomised.pop()
-            self.keys[direction] = random.choice(tuple(self.possible_keys - set(self.keys.values())))
+    def _randomise_movement_key(self):
+        self.keys[self.next_direction] = random.choice(tuple(self.possible_keys - set(self.keys.values())))
+        self.next_direction = self._get_next_direction()
+
+    def _get_next_direction(self):
+        if not self.key_directions_randomised:
+            self.key_directions_randomised = list(self.MOVEMENT_DELTAS.keys())
+            random.shuffle(self.key_directions_randomised)
+
+        return self.key_directions_randomised.pop()
 
     def delete(self):
         for key in self.MOVEMENT_DELTAS.keys():
             label = self.key_labels[key]
             label.delete()
-        self.key_timer_sprite.delete()
         super().delete()
