@@ -1,7 +1,7 @@
 from pyglet import resource, font
 from pyglet.image import SolidColorImagePattern
 
-# Make our resource imports relative to the hell/resources/ directory.
+# Make our resource imports relative to the src/resources/ directory.
 resource.path = ['resources']
 resource.reindex()
 

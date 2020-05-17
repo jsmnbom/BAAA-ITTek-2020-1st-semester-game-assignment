@@ -9,8 +9,8 @@ from pyglet.window import Window, FPSDisplay
 from pyglet.graphics import Batch
 import pymunk
 
-from hell.game import (TPS, WIDTH, HEIGHT, Player, GameObject, CollisionType, Level, EnemyPawn, EnemySlider, GameUI,
-                       Pellet, Menu)
+from src.game import (TPS, WIDTH, HEIGHT, Player, GameObject, CollisionType, Level, EnemyPawn, EnemySlider, GameUI,
+                      Pellet, Menu)
 
 # A highscore object, easier to sort than having the data in a dict
 Highscore = namedtuple('Highscore', 'name, score')
