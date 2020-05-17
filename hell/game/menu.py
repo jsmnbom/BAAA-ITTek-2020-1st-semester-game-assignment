@@ -9,7 +9,7 @@ from . import GameObject, WIDTH, HEIGHT
 
 
 class Menu(GameObject):
-    def __init__(self, *, highscores, ui_batch, cb_start_game, cb_add_highscore=None, add_score=None):
+    def __init__(self, *, highscores, ui_batch, cb_start_game=None, cb_add_highscore=None, add_score=None):
         super().__init__()
 
         self.event_handlers = [self]

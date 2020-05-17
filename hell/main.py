@@ -65,7 +65,7 @@ class GameWindow(Window):
                     self.save_highscores()
                 self.main_menu()
 
-            self.menu = Menu(highscores=self.highscores, ui_batch=self.ui_batch, cb_start_game=self.start_game,
+            self.menu = Menu(highscores=self.highscores, ui_batch=self.ui_batch,
                              add_score=add_score, cb_add_highscore=add_highscore)
         else:
             self.menu = Menu(highscores=self.highscores, ui_batch=self.ui_batch, cb_start_game=self.start_game)
