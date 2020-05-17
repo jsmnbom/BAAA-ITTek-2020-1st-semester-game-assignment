@@ -5,7 +5,7 @@ from pyglet.text.layout import IncrementalTextLayout
 from pyglet.text.document import UnformattedDocument
 import pytweening
 
-from . import GameObject, WIDTH, HEIGHT
+from . import GameObject, WIDTH, HEIGHT, blink
 
 
 class Menu(GameObject):
@@ -145,18 +145,10 @@ class Menu(GameObject):
     def tick(self, dt: float):
         if self.continue_label:
             self.continue_timer += dt
-            if self.continue_timer < 1:
-                self.continue_label.color = (
-                    255, 255, 255,
-                    int(pytweening.easeOutCubic(self.continue_timer) * 255)
-                )
-            elif self.continue_timer > 2:
+            if self.continue_timer > 2:
                 self.continue_timer = 0
-            else:
-                self.continue_label.color = (
-                    255, 255, 255,
-                    int(255 - pytweening.easeInCubic(self.continue_timer - 1) * 255)
-                )
+            self.continue_label.color = blink(self.continue_timer, pytweening.easeInCubic, pytweening.easeOutCubic, 2,
+                                              (255, 255, 255))
 
     def delete(self):
         for child in self.children:

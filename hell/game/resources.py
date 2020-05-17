@@ -26,7 +26,5 @@ _set_anchor_center(pellet_image)
 
 overlay_image = SolidColorImagePattern((255, 255, 255, 255)).create_image(WIDTH, HEIGHT)
 
-key_timer_image = SolidColorImagePattern((255, 255, 255, 150)).create_image(16, 16)
-
 resource.add_font('m5x7.ttf')
 font_m5x7 = font.load('m5x7')
