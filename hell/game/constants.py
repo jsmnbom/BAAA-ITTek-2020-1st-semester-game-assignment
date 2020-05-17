@@ -1,5 +1,5 @@
 SIZE = WIDTH, HEIGHT = (1280, 960)
-TPS = 120.0
+TPS = 60.0
 
 
 class CollisionType:
