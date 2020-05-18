@@ -19,6 +19,8 @@ class Enemy(Actor):
         shape = pymunk.Poly.create_box(body, size, 1)
         # Assign correct collision type
         shape.collision_type = collision_type
+        shape.filter = pymunk.ShapeFilter(categories=collision_type,
+                                          mask=pymunk.ShapeFilter.ALL_MASKS ^ CollisionType.WallSensor ^ CollisionType.WallKill)
         # Initialize actor with our body and shape
         super().__init__(body=body, shape=shape, img=img, batch=batch, pos=pos, **kwargs)
 
@@ -43,15 +45,6 @@ class EnemyPawn(Enemy):
         vel = Vec2d(self.player.position) - Vec2d(self.position)
         self.body.velocity = vel.normalized() * self.speed
 
-    @staticmethod
-    def init_collision(game_window):
-        """Setup EnemyPawn collision.
-
-        Will ignore collisions between EnemyPawn and Wall
-        """
-        collision_handler = game_window.space.add_collision_handler(CollisionType.EnemyPawn, CollisionType.Wall)
-        collision_handler.begin = lambda *_: False
-
 
 class EnemySlider(Enemy):
     """A big and fast enemy that slides towards the player, but only moves in a single cardinal direction at once."""
@@ -62,7 +55,7 @@ class EnemySlider(Enemy):
                          collision_type=CollisionType.EnemySlider, batch=batch, **kwargs)
 
         # Start out in a pleasant screen color (will only tint the white part of the sprite)
-        self.color = make_color(hue=110/360, saturation=1, luminance=0.5)
+        self.color = make_color(hue=110 / 360, saturation=1, luminance=0.5)
 
         self.speed = 100
 
@@ -82,17 +75,26 @@ class EnemySlider(Enemy):
         Will ignore collisions between EnemySlider and Wall.
         Will also override collision for EnemySlider and Player.
         """
-        def player_collision_pre_solve(arbiter, space, data):
-            # Find what is essentially *self* by looking at the owner of the EnemySlider shape that collided
-            slider = arbiter.shapes[1].owner
+
+        def push(arbiter, slider, pushee):
             # Get unit vector of how the EnemySlider is moving currently
             direction = (slider.end_pos - slider.start_pos).normalized()
             # Get how far the player and EnemySlider is from each other
             distance = abs(arbiter.contact_point_set.points[0].distance)
             # Then simply push the player in that direction
-            arbiter.shapes[0].body.position += direction * distance
+            pushee.body.position += direction * distance
             # Ignore default collision response
+
+        def player_collision_pre_solve(arbiter, space, data):
+            # Find what is essentially *self* by looking at the owner of the EnemySlider shape that collided
+            slider = arbiter.shapes[1].owner
+            push(arbiter, slider, arbiter.shapes[0])
             return False
+
+        def pellet_collision_pre_solve(arbiter, space, data):
+            # Find what is essentially *self* by looking at the owner of the EnemySlider shape that collided
+            slider = arbiter.shapes[1].owner
+            return (slider.end_pos - slider.pos).length < 128
 
         # Override player collision
         # We need this because standard pymunk collision likes to just push the player to the side
@@ -100,9 +102,9 @@ class EnemySlider(Enemy):
         collision = game_window.space.add_collision_handler(CollisionType.Player, CollisionType.EnemySlider)
         collision.pre_solve = player_collision_pre_solve
 
-        # Ignore Wall collisions
-        collision_handler = game_window.space.add_collision_handler(CollisionType.EnemySlider, CollisionType.Wall)
-        collision_handler.begin = lambda *_: False
+        # Push pellets if they would otherwise have been inside us
+        collision = game_window.space.add_collision_handler(CollisionType.Pellet, CollisionType.EnemySlider)
+        collision.pre_solve = pellet_collision_pre_solve
 
     def tick(self, dt: float):
         super().tick(dt)

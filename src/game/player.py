@@ -45,6 +45,8 @@ class Player(Actor):
         body = pymunk.Body(mass, pymunk.moment_for_box(mass, size))
         shape = pymunk.Poly.create_box(body, size, 2)
         shape.collision_type = CollisionType.Player
+        shape.filter = pymunk.ShapeFilter(categories=CollisionType.Player,
+                                          mask=pymunk.ShapeFilter.ALL_MASKS ^ CollisionType.WallSensor)
         super().__init__(body=body, shape=shape, img=resources.player_image, batch=player_batch, pos=pos, **kwargs)
         # Speed that is slightly higher than EnemyPawn but slower than EnemySlider
         self.speed = 40
@@ -80,7 +82,7 @@ class Player(Actor):
         self.key_timer_min = 5
         self.key_timer_max = 15
         # Timer that goes down and when reaches 0 a key will be randomized
-        self.key_timer = random.randrange(self.key_timer_min, self.key_timer_max)
+        self.key_timer = 10000#random.randrange(self.key_timer_min, self.key_timer_max)
         # A list of directions (up, left, right, down) but randomized
         # This allows us to, instead of just picking a a random direction,
         # we make sure that all the directions are chosen with equal frequency

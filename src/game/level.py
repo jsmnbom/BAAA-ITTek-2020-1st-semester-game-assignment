@@ -2,6 +2,7 @@ import random
 from collections import namedtuple
 
 import pymunk
+from pyglet.graphics import OrderedGroup
 
 from . import GameObject, EnemyPawn, WIDTH, HEIGHT, EnemySlider, Pellet
 
@@ -12,7 +13,7 @@ EnemyData = namedtuple('EnemyData', 'type, weight, cap')
 
 enemy_data = [
     #EnemyData(EnemyPawn, 100, 100),
-    EnemyData(EnemySlider, 20, 2),
+    EnemyData(EnemySlider, 20, 1),
 ]
 
 
@@ -30,6 +31,9 @@ class Level(GameObject):
         self.player = player
 
         self.enemy_timer = 2
+
+        self.enemy_group = OrderedGroup(0)
+        self.pellet_group = OrderedGroup(1)
 
         # Keep track of how many enemies of each type we've spawned
         # so we can keep it under its cap
@@ -98,12 +102,12 @@ class Level(GameObject):
                 pos = (x, y)
 
             # Spawn an enemy at the found position
-            self.new_objects += [enemy_type(pos=pos, player=self.player, batch=self.batch)]
+            self.new_objects += [enemy_type(pos=pos, player=self.player, batch=self.batch, group=self.enemy_group)]
             self.enemy_timer = 0
 
     def spawn_pellet(self):
         # Find a random place at least 100px away from the walls
-        x = random.randrange(100, WIDTH - 100)
-        y = random.randrange(100, HEIGHT - 100)
+        x = random.randrange(175, WIDTH - 175)
+        y = random.randrange(175, HEIGHT - 175)
         # And then spawn a pellet there
-        self.new_objects += [Pellet(pos=(x, y), batch=self.batch)]
+        self.new_objects += [Pellet(pos=(x, y), batch=self.batch, group=self.pellet_group)]

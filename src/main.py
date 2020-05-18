@@ -30,7 +30,7 @@ class GameWindow(Window):
         self.main_batch = Batch()
         self.player_batch = Batch()
         self.ui_batch = Batch()
-        self.overlay_batch = Batch()
+        self.background_batch = Batch()
 
         # FPS display in bottom left corner
         self.fps_display = FPSDisplay(window=self)
@@ -123,7 +123,8 @@ class GameWindow(Window):
         self._add_game_object(self.level)
 
         # Add UI which is only the score for now
-        self.ui = GameUI(player=self.player, ui_batch=self.ui_batch, overlay_batch=self.overlay_batch)
+        self.ui = GameUI(player=self.player, space=self.space, ui_batch=self.ui_batch,
+                         background_batch=self.background_batch)
         self._add_game_object(self.ui)
 
         # Add walls on window edges
@@ -131,26 +132,39 @@ class GameWindow(Window):
 
         # Initialize collisions
         Pellet.init_collision(self)
-        EnemyPawn.init_collision(self)
         EnemySlider.init_collision(self)
 
     def _add_walls(self):
         """Adds four walls on window edges."""
+        # We actually add 8 walls, 4 on the window edges, and four a bit offset
+        # so that the player only dies if they get sufficiently out of screen
         # Walls are static (ie they don't move)
         static_body = self.space.static_body
-        walls = [
+        kill_walls = [
             pymunk.Segment(static_body, (-32, -32), (WIDTH + 32, -32), 0.0),
             pymunk.Segment(static_body, (WIDTH + 32, -32), (WIDTH + 32, HEIGHT + 32), 0.0),
             pymunk.Segment(static_body, (WIDTH + 32, HEIGHT + 32), (-32, HEIGHT + 32), 0.0),
             pymunk.Segment(static_body, (-32, HEIGHT + 32), (-32, -32), 0.0)
         ]
-        for wall in walls:
+        for wall in kill_walls:
             self.space.add(wall)
-            wall.collision_type = CollisionType.Wall
+            wall.collision_type = CollisionType.WallKill
+            wall.filter = pymunk.ShapeFilter(categories=CollisionType.WallKill)
 
         # When player touches a wall we want to go to the menu to add the score
-        collision_handler = self.space.add_collision_handler(CollisionType.Player, CollisionType.Wall)
+        collision_handler = self.space.add_collision_handler(CollisionType.Player, CollisionType.WallKill)
         collision_handler.post_solve = lambda *_: self.main_menu(add_score=self.ui.score)
+
+        sensor_walls = [
+            pymunk.Segment(static_body, (0, 0), (WIDTH, 0), 0.0),
+            pymunk.Segment(static_body, (WIDTH, 0), (WIDTH, HEIGHT), 0.0),
+            pymunk.Segment(static_body, (WIDTH, HEIGHT), (0, HEIGHT), 0.0),
+            pymunk.Segment(static_body, (0, HEIGHT), (0, 0), 0.0)
+        ]
+        for wall in sensor_walls:
+            self.space.add(wall)
+            wall.collision_type = CollisionType.WallSensor
+            wall.filter = pymunk.ShapeFilter(categories=CollisionType.WallSensor)
 
     def tick(self, dt: float):
         # Objects that we need to add (enemy or pellets from Level)
@@ -195,14 +209,14 @@ class GameWindow(Window):
     def on_draw(self):
         # First clear the canvas
         self.clear()
+        # Then draw any background
+        self.background_batch.draw()
         # Then draw the main batch (level, enemies, pellets etc)
         self.main_batch.draw()
         # Then draw the player on top
         self.player_batch.draw()
         # Then draw the UI on top
         self.ui_batch.draw()
-        # Then draw any overlay on top
-        self.overlay_batch.draw()
         # And finally the FPS display
         self.fps_display.draw()
 

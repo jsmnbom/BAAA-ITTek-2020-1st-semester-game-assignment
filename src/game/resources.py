@@ -24,5 +24,8 @@ _set_anchor_center(enemy_slider_image)
 pellet_image = resource.image('pellet.png')
 _set_anchor_center(pellet_image)
 
+danger_image = resource.image('danger.png')
+_set_anchor_center(danger_image)
+
 resource.add_font('m5x7.ttf')
 font_m5x7 = font.load('m5x7')  # Only assigned so it doesn't get garbage collected immediately

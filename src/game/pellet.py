@@ -14,9 +14,12 @@ class Pellet(Actor):
         body = pymunk.Body(mass, pymunk.moment_for_box(mass, size))
         shape = pymunk.Poly.create_box(body, size, 0)
         shape.collision_type = CollisionType.Pellet
+        shape.filter = pymunk.ShapeFilter(categories=CollisionType.Pellet,
+                                          mask=pymunk.ShapeFilter.ALL_MASKS ^ CollisionType.EnemyPawn)
         super().__init__(body=body, shape=shape, img=resources.pellet_image, batch=batch, pos=pos, **kwargs)
 
     def tick(self, dt: float):
+        super().tick(dt)
         # Rotate a bit
         self.rotation += 90 * dt
 
@@ -42,9 +45,3 @@ class Pellet(Actor):
         # magic - see Actor - to be able to call a method directly on the collided object).
         collision_handler = game_window.space.add_collision_handler(CollisionType.Player, CollisionType.Pellet)
         collision_handler.pre_solve = pre_solve
-
-        # Ignore collisions with enemies (so they don't push the pellet around)
-        collision_handler = game_window.space.add_collision_handler(CollisionType.EnemyPawn, CollisionType.Pellet)
-        collision_handler.begin = lambda *_: False
-        collision_handler = game_window.space.add_collision_handler(CollisionType.EnemySlider, CollisionType.Pellet)
-        collision_handler.begin = lambda *_: False
