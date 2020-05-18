@@ -1,3 +1,4 @@
+from pymunk.vec2d import Vec2d
 import pymunk
 
 from . import Actor, resources, CollisionType
@@ -22,6 +23,9 @@ class Pellet(Actor):
         super().tick(dt)
         # Rotate a bit
         self.rotation += 90 * dt
+
+        # Don't ever glide or move (unless pushed)
+        self.body.velocity = Vec2d()
 
     def on_player_collide(self, game_window):
         """Gets called when a player collides with a pellet."""
