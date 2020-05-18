@@ -5,7 +5,7 @@ from pymunk.vec2d import Vec2d
 import pymunk
 import pytweening
 
-from . import Actor, resources, CollisionType, WIDTH, HEIGHT
+from . import Actor, resources, CollisionType, WIDTH, HEIGHT, make_color
 
 
 class Enemy(Actor):
@@ -61,6 +61,8 @@ class EnemySlider(Enemy):
         super().__init__(mass=500, size=self.SIZE, img=resources.enemy_slider_image, pos=pos, player=player,
                          collision_type=CollisionType.EnemySlider, batch=batch, **kwargs)
 
+        self.color = make_color(hue=110/360, saturation=1, luminance=0.5)
+
         self.speed = 100
 
         self.wait_timer = 0
@@ -109,6 +111,8 @@ class EnemySlider(Enemy):
         # As long as we're not moving we want to calculate where we would like to move in the future
         # This is so we can rotate the sprite
         if not self.moving:
+            self.color = make_color(hue=(110 - (110 * self.wait_timer / 3)) / 360, saturation=1, luminance=0.5)
+
             # If we're not moving and we've been waiting for 3 sec
             if self.wait_timer > 3:
                 # Then move

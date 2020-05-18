@@ -1,3 +1,6 @@
+from colour import Color
+
+
 def valmap(value, istart, istop, ostart, ostop):
     """Maps a value in the range istart,istop to ostart,ostop."""
     return ostart + (ostop - ostart) * ((value - istart) / (istop - istart))
@@ -17,3 +20,8 @@ def blink(value, tween_in, tween_out, interval, color):
         # The if above means value is from 0 to interval/2
         # Since it's tween_OUT we make that from 1 to 0
         return color[:3] + (int(tween_out(valmap(value, 0, interval / 2, 1, 0)) * 255),)
+
+
+def make_color(*args, **kwargs):
+    """Creates a Color and converts it into pyglet format"""
+    return (x * 255 for x in Color(*args, **kwargs).rgb)

@@ -11,7 +11,7 @@ from . import GameObject, EnemyPawn, WIDTH, HEIGHT, EnemySlider, Pellet
 EnemyData = namedtuple('EnemyData', 'type, weight, cap')
 
 enemy_data = [
-    EnemyData(EnemyPawn, 100, 100),
+    #EnemyData(EnemyPawn, 100, 100),
     EnemyData(EnemySlider, 20, 2),
 ]
 
