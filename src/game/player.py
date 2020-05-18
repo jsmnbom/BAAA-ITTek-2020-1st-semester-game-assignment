@@ -82,7 +82,7 @@ class Player(Actor):
         self.key_timer_min = 5
         self.key_timer_max = 15
         # Timer that goes down and when reaches 0 a key will be randomized
-        self.key_timer = 10000#random.randrange(self.key_timer_min, self.key_timer_max)
+        self.key_timer = random.randrange(self.key_timer_min, self.key_timer_max)
         # A list of directions (up, left, right, down) but randomized
         # This allows us to, instead of just picking a a random direction,
         # we make sure that all the directions are chosen with equal frequency
