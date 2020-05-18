@@ -19,6 +19,7 @@ Highscore = namedtuple('Highscore', 'name, score')
 # noinspection PyAbstractClass
 class GameWindow(Window):
     """Main game window."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -138,10 +139,10 @@ class GameWindow(Window):
         # Walls are static (ie they don't move)
         static_body = self.space.static_body
         walls = [
-            pymunk.Segment(static_body, (0, 0), (WIDTH, 0), 0.0),
-            pymunk.Segment(static_body, (WIDTH, 0), (WIDTH, HEIGHT), 0.0),
-            pymunk.Segment(static_body, (WIDTH, HEIGHT), (0, HEIGHT), 0.0),
-            pymunk.Segment(static_body, (0, HEIGHT), (0, 0), 0.0)
+            pymunk.Segment(static_body, (-32, -32), (WIDTH + 32, -32), 0.0),
+            pymunk.Segment(static_body, (WIDTH + 32, -32), (WIDTH + 32, HEIGHT + 32), 0.0),
+            pymunk.Segment(static_body, (WIDTH + 32, HEIGHT + 32), (-32, HEIGHT + 32), 0.0),
+            pymunk.Segment(static_body, (-32, HEIGHT + 32), (-32, -32), 0.0)
         ]
         for wall in walls:
             self.space.add(wall)
