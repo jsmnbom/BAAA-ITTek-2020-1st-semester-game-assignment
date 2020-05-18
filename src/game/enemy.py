@@ -1,3 +1,4 @@
+import random
 from typing import Optional
 
 from pymunk.vec2d import Vec2d
@@ -67,6 +68,9 @@ class EnemySlider(Enemy):
         self.start_pos: Optional[Vec2d] = None
         self.end_pos: Optional[Vec2d] = None
         self.move_timer = 0
+
+        # if the x axis is preferred to get close the player
+        self.x_axis_preferred = bool(random.getrandbits(1))
 
     @staticmethod
     def init_collision(game_window):
@@ -138,8 +142,7 @@ class EnemySlider(Enemy):
             # If we are not able to hit the player
             else:
                 # Try to get in line with the player
-                # Move in the direction that we're closest to the player in
-                if abs(delta.x) < abs(delta.y):
+                if self.x_axis_preferred:
                     self.end_pos.y = self.pos.y
                     self.end_pos.x = self.player.x
                 else:
@@ -162,6 +165,8 @@ class EnemySlider(Enemy):
             if self.move_timer >= 1.0:
                 self.wait_timer = 0
                 self.moving = False
+                # Maybe choose another preferred axis
+                self.x_axis_preferred = bool(random.getrandbits(1))
         else:
             # Reset velocity so if we got pushed we stop
             self.body.velocity = (0, 0)
