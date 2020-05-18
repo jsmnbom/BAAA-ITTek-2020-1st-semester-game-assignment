@@ -77,9 +77,10 @@ class Player(Actor):
 
         # Reset the key_timer to this value when it reaches 0
         # Effectively how often (in sec) to randomize a key
-        self.key_timer_max = 5
+        self.key_timer_min = 5
+        self.key_timer_max = 15
         # Timer that goes down and when reaches 0 a key will be randomized
-        self.key_timer = self.key_timer_max
+        self.key_timer = random.randrange(self.key_timer_min, self.key_timer_max)
         # A list of directions (up, left, right, down) but randomized
         # This allows us to, instead of just picking a a random direction,
         # we make sure that all the directions are chosen with equal frequency
@@ -122,7 +123,7 @@ class Player(Actor):
         # If the key timer has reached 0
         if self.key_timer <= 0:
             # Reset the timer
-            self.key_timer = self.key_timer_max
+            self.key_timer = random.randrange(self.key_timer_min, self.key_timer_max)
             # Randomize the key
             self._randomise_movement_key()
             # Then make sure all the labels are visible
