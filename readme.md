@@ -1,4 +1,4 @@
-# *Welcome to hell*
+![Welcome to hell](https://raw.githubusercontent.com/jsmnbom/game-assignment/master/image.png)
 
 ## Introduction
 
@@ -25,4 +25,4 @@ Controls to move the player are shown next to the player. They start out being W
 # Screnshot
 Here's a screenshot from playing the game.
 
-
+![Screenshot of the game](https://raw.githubusercontent.com/jsmnbom/game-assignment/master/gameplay.png)
