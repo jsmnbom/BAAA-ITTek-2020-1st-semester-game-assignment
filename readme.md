@@ -1,4 +1,4 @@
-![Welcome to hell](https://raw.githubusercontent.com/jsmnbom/game-assignment/master/image.png)
+![Welcome to hell](https://raw.githubusercontent.com/jsmnbom/game-assignment/master/title.png)
 
 ## Introduction
 
