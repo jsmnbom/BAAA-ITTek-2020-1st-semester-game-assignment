@@ -22,6 +22,8 @@ To start the game after launching it, simply hit the SPACEBAR.
 
 Controls to move the player are shown next to the player. They start out being WASD but every once in a while one of the keys are changed to a random letter or number (a-z and 0-9).
 
+As with most games the goal is to get the highest score. To this end when you die, you are able to enter a name for the highscore display on the main menu. To increase your score, run over/eat the spinning white pellets that appear one at a time in the game.
+
 # Screnshot
 Here's a screenshot from playing the game.
 
