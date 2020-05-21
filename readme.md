@@ -1,4 +1,4 @@
-![Welcome to hell](https://raw.githubusercontent.com/jsmnbom/game-assignment/master/title.png)
+# ![Welcome to hell](https://raw.githubusercontent.com/jsmnbom/game-assignment/master/title.png)
 
 ## Introduction
 
@@ -24,7 +24,8 @@ Controls to move the player are shown next to the player. They start out being W
 
 As with most games the goal is to get the highest score. To this end when you die, you are able to enter a name for the highscore display on the main menu. To increase your score, run over/eat the spinning white pellets that appear one at a time in the game.
 
-# Screnshot
+## Screenshot
+
 Here's a screenshot from playing the game.
 
 ![Screenshot of the game](https://raw.githubusercontent.com/jsmnbom/game-assignment/master/gameplay.png)
